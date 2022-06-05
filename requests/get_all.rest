@@ -1,1 +1,2 @@
-GET http://localhost:3001/api/persons
+//GET http://localhost:3001/api/persons
+GET https://warm-inlet-67157.herokuapp.com/api/persons
