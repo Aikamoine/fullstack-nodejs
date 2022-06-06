@@ -33,7 +33,6 @@ app.get('/api/persons', (req, res) => {
 
 app.get('/api/persons/:id', (req, res, next) => {
     const id = req.params.id
-    console.log('get', id)
     Person.findById(id)
         .then(p => {
             if (p) {
@@ -72,7 +71,6 @@ app.post('/api/persons', (req, res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
     const body = req.body
-    console.log('put body', body)
     const person = {
         name: body.name,
         number: body.number,
@@ -84,7 +82,6 @@ app.put('/api/persons/:id', (req, res, next) => {
         person,
         {new: true , runValidators: true, context: 'query'})
         .then(updatedPerson => {
-            console.log(updatedPerson)
             res.json(updatedPerson)
         })
         .catch(error => next(error))
