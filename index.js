@@ -3,7 +3,6 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config()
 const Person = require('./models/person')
-const { query } = require('express')
 
 /*
 const morgan = require('morgan')
@@ -16,93 +15,93 @@ app.use(cors())
 app.use(express.static('build'))
 
 app.get('/', (req, res) => {
-    res.send('<h1>Hello Word!</h1>')
+  res.send('<h1>Hello Word!</h1>')
 })
 
 app.get('/info', (req, res) => {
-    Person.find({}).then(p => {
-        res.send('<div><div>Phonebook has info for ' + p.length + ' people</div><div>' + new Date() + '</div></div>')
-    })
+  Person.find({}).then(p => {
+    res.send('<div><div>Phonebook has info for ' + p.length + ' people</div><div>' + new Date() + '</div></div>')
+  })
 })
 
 app.get('/api/persons', (req, res) => {
-    Person.find({}).then(p => {
-        res.json(p)
-    })
+  Person.find({}).then(p => {
+    res.json(p)
+  })
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
-    const id = req.params.id
-    Person.findById(id)
-        .then(p => {
-            if (p) {
-                res.json(p)
-            } else {
-                res.status(404).end()
-            }
-        })
-        .catch(error => next(error))
+  const id = req.params.id
+  Person.findById(id)
+    .then(p => {
+      if (p) {
+        res.json(p)
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
-    Person.findByIdAndRemove(req.params.id)
-        .then(result => {
-            res.status(204).end()
-        })
-        .catch(error => next(error))
-    //persons = persons.filter(p => p.id !== id)
+  Person.findByIdAndRemove(req.params.id)
+    .then(res => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
+  //persons = persons.filter(p => p.id !== id)
 })
 
 app.post('/api/persons', (req, res, next) => {
-    const body = req.body
+  const body = req.body
 
-    const p = new Person({
-        name: body.name,
-        date: new Date(),
-        number: body.number,
+  const p = new Person({
+    name: body.name,
+    date: new Date(),
+    number: body.number,
+  })
+  p.save()
+    .then(savedPerson => {
+      console.log('added', savedPerson)
+      res.json(savedPerson)
     })
-    p.save()
-        .then(savedPerson => {
-            console.log('added', savedPerson)
-            res.json(savedPerson)
-        })
-        .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-    const body = req.body
-    const person = {
-        name: body.name,
-        number: body.number,
-        date: new Date(),
-    }
+  const body = req.body
+  const person = {
+    name: body.name,
+    number: body.number,
+    date: new Date(),
+  }
 
-    Person.findByIdAndUpdate(
-        req.params.id,
-        person,
-        {new: true , runValidators: true, context: 'query'})
-        .then(updatedPerson => {
-            res.json(updatedPerson)
-        })
-        .catch(error => next(error))
+  Person.findByIdAndUpdate(
+    req.params.id,
+    person,
+    { new: true , runValidators: true, context: 'query' })
+    .then(updatedPerson => {
+      res.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, req, res, next) => {
-    console.error(error.message)
-    if (error.name === 'CastError') {
-        return res.status(400).send({ error: 'malformatted id' })
-    }
-    if (error.name === 'ValidationError') {
-        return res.status(400).json({ error: error.message })
-    }
-    next(error)
+  console.error(error.message)
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  }
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message })
+  }
+  next(error)
 }
 
 app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
 
 
